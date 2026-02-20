@@ -1,0 +1,18 @@
+{
+  "name": "create-aist-app",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "create-aist-app": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --dts --outDir dist",
+    "dev": "tsup src/cli.ts --format esm --dts --outDir dist --watch"
+  },
+  "dependencies": {
+    "@aist/server": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0"
+  }
+}

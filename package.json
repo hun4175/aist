@@ -1,0 +1,16 @@
+{
+  "name": "aist",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "pnpm -r test",
+    "create": "pnpm exec create-aist-app"
+  },
+  "devDependencies": {
+    "create-aist-app": "workspace:*",
+    "pnpm": "^9.0.0",
+    "typescript": "^5.0.0"
+  }
+}

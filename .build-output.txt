@@ -1,0 +1,46 @@
+Scope: 7 of 8 workspace projects
+packages/page build$ tsup src/index.ts --format esm --dts
+packages/router build$ tsup src/index.ts --format esm --dts
+packages/validator build$ tsup src/index.ts --format esm --dts
+packages/router build: CLI Building entry: src/index.ts
+packages/router build: CLI tsup v8.5.1
+packages/validator build: CLI Building entry: src/index.ts
+packages/validator build: CLI tsup v8.5.1
+packages/router build: CLI Target: node16
+packages/page build: CLI Building entry: src/index.ts
+packages/router build: ESM Build start
+packages/page build: CLI tsup v8.5.1
+packages/validator build: CLI Target: node16
+packages/validator build: ESM Build start
+packages/page build: CLI Target: node16
+packages/page build: ESM Build start
+packages/validator build: ESM dist\index.js 3.02 KB
+packages/router build: ESM dist\index.js 2.25 KB
+packages/router build: ESM ⚡️ Build success in 37ms
+packages/validator build: ESM ⚡️ Build success in 34ms
+packages/page build: ESM dist\index.js 169.00 B
+packages/page build: ESM ⚡️ Build success in 33ms
+packages/router build: DTS Build start
+packages/validator build: DTS Build start
+packages/page build: DTS Build start
+packages/page build: DTS ⚡️ Build success in 1304ms
+packages/page build: DTS dist\index.d.ts 201.00 B
+packages/validator build: src/index.ts(13,10): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', 'node20', or 'nodenext'.
+packages/validator build: Error: error occurred in dts build
+packages/validator build:     at Worker.<anonymous> (C:\Users\조상헌\Documents\Wavve\git\aist\node_modules\.pnpm\tsup@8.5.1_postcss@8.5.6_typescript@5.9.3\node_modules\tsup\dist\index.js:1545:26)
+packages/validator build:     at Worker.emit (node:events:519:28)
+packages/validator build:     at MessagePort.<anonymous> (node:internal/worker:263:53)
+packages/validator build:     at [nodejs.internal.kHybridDispatch] (node:internal/event_target:820:20)
+packages/validator build:     at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+packages/validator build: DTS Build error
+packages/page build: Done
+packages/validator build: Failed
+C:\Users\조상헌\Documents\Wavve\git\aist\packages\validator:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @aist/validator@0.1.0 build: `tsup src/index.ts --format esm --dts`
+Exit status 1
+packages/router build: DTS ⚡️ Build success in 1380ms
+packages/router build: DTS dist\index.d.ts 635.00 B
+packages/router build: Done
+
+
+Command failed: pnpm -r build 2>&1

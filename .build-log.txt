@@ -1,0 +1,100 @@
+>>> Building @aist/router...
+
+> @aist/router@0.1.0 build C:\Users\조상헌\Documents\Wavve\git\aist\packages\router
+> tsup src/index.ts --format esm --dts
+
+CLI Building entry: src/index.ts
+CLI tsup v8.5.1
+CLI Target: node16
+ESM Build start
+ESM dist\index.js 2.25 KB
+ESM ⚡️ Build success in 28ms
+DTS Build start
+DTS ⚡️ Build success in 1001ms
+DTS dist\index.d.ts 635.00 B
+
+    OK
+>>> Building @aist/page...
+
+> @aist/page@0.1.0 build C:\Users\조상헌\Documents\Wavve\git\aist\packages\page
+> tsup src/index.ts --format esm --dts
+
+CLI Building entry: src/index.ts
+CLI tsup v8.5.1
+CLI Target: node16
+ESM Build start
+ESM dist\index.js 169.00 B
+ESM ⚡️ Build success in 28ms
+DTS Build start
+DTS ⚡️ Build success in 931ms
+DTS dist\index.d.ts 201.00 B
+
+    OK
+>>> Building @aist/validator...
+
+> @aist/validator@0.1.0 build C:\Users\조상헌\Documents\Wavve\git\aist\packages\validator
+> tsup src/index.ts --format esm --dts
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Target: es2020
+ESM Build start
+ESM dist\index.js 2.82 KB
+ESM ⚡️ Build success in 28ms
+DTS Build start
+DTS ⚡️ Build success in 894ms
+DTS dist\index.d.ts 551.00 B
+
+    OK
+>>> Building @aist/server...
+
+> @aist/server@0.1.0 build C:\Users\조상헌\Documents\Wavve\git\aist\packages\server
+> tsup src/index.ts --format esm --dts
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Target: es2020
+ESM Build start
+ESM dist\index.js 7.76 KB
+ESM ⚡️ Build success in 30ms
+DTS Build start
+DTS ⚡️ Build success in 984ms
+DTS dist\index.d.ts 857.00 B
+
+    OK
+>>> Building @aist/vite...
+
+> @aist/vite@0.1.0 build C:\Users\조상헌\Documents\Wavve\git\aist\packages\vite
+> tsup src/index.ts --format esm --dts
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Target: es2020
+ESM Build start
+ESM dist\index.js 519.00 B
+ESM ⚡️ Build success in 28ms
+DTS Build start
+DTS ⚡️ Build success in 1157ms
+DTS dist\index.d.ts 108.00 B
+
+    OK
+>>> Building create-aist-app...
+
+> create-aist-app@0.1.0 build C:\Users\조상헌\Documents\Wavve\git\aist\packages\create-aist-app
+> tsup src/cli.ts --format esm --dts --outDir dist
+
+CLI Building entry: src/cli.ts
+CLI tsup v8.5.1
+CLI Target: node16
+ESM Build start
+ESM dist\cli.js 1.67 KB
+ESM ⚡️ Build success in 29ms
+DTS Build start
+DTS ⚡️ Build success in 951ms
+DTS dist\cli.d.ts 20.00 B
+
+    OK
+>>> All 6 packages built successfully.

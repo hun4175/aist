@@ -530,3 +530,47 @@ export default (content) => `
 
 13. Prerender (빌드 시 정적 HTML)
 14. Adapter (Vercel, Netlify, Node 등 배포)
+
+---
+
+## 11. Phase 3: Prerender, Adapter (구현 완료)
+
+### 11.1 Prerender
+
+| 구분 | 명세 |
+|------|------|
+| **패키지** | @aist/build |
+| **함수** | `prerender(opts)` — 정적 라우트 HTML 생성 |
+| **출력** | `.output/public/` — index.html, about/index.html, _islands/, _aist/ |
+| **동적 라우트** | opts.routes에 경로 추가 (예: `['/posts/1']`) |
+
+```javascript
+import { prerender } from '@aist/build'
+await prerender({
+  root, pagesDir, apiDir, publicDir, serverDir,
+  outDir: '.output/public',
+  routes: ['/posts/1', '/posts/2']  // 동적 라우트 추가
+})
+```
+
+### 11.2 Adapter
+
+| 어댑터 | 패키지 | 빌드 출력 | 실행 |
+|--------|--------|-----------|------|
+| **Node** | @aist/adapter-node | .output/ (pages, api, server.js) | `node .output/server.js` |
+| **Vercel** | @aist/adapter-vercel | .output/ (api/index.js, vercel.json) | `vercel deploy` |
+| **Netlify** | @aist/adapter-netlify | .output/ (netlify/functions, netlify.toml) | `netlify deploy` |
+
+### 11.3 예제 빌드 명령
+
+```bash
+pnpm run build        # Node 어댑터 (기본)
+pnpm run build:static # Prerender만 (.output/public)
+pnpm run build:node   # Node 어댑터
+pnpm run build:vercel # Vercel 어댑터
+pnpm run build:netlify # Netlify 어댑터
+```
+
+### 11.4 Router 확장
+
+- `getStaticRoutes(routes)` — [id] 등 동적 세그먼트 제외한 정적 라우트만 반환
