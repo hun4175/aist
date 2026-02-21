@@ -1,0 +1,10 @@
+{
+  "name": "{{name}}",
+  "type": "module",
+  "scripts": {
+    "dev": "node dev.js"
+  },
+  "dependencies": {
+    "@aist/server": "^0.1.0"
+  }
+}

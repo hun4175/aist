@@ -1,0 +1,24 @@
+---
+description: Aist convention 및 validator 에러 복구 가이드
+globs: pages/**/*.js,api/**/*.js,server/**/*.js
+alwaysApply: false
+---
+
+# Aist 에러 복구 가이드
+
+## Validator 에러 → 수정
+
+| 에러 | 수정 |
+|------|------|
+| `default export must be function, got undefined` | `export default (params) => \`<div>...</div>\`` 추가 |
+| `handler must export default function` | `export default (req) => json(...)` 형태로 |
+| `_layout.js: default export must be` | `export default (content, ctx = {}) => \`...\`` |
+| `middleware must export default function` | `export default (req, next) => next(req)` |
+| `*.island.js load error` | import/문법 확인. `@aist/island` 사용 |
+
+## Convention
+
+- 페이지: `경로.page.js` → `export default (params?) => html`
+- API: `경로.메서드.js` → `export default (req) => json(...)`, `req.params.id`
+- Island: `Name.island.js` → `<name-island>` (kebab)
+- 전역: `json`, `redirect`, `each`, `$if` — import 불필요
