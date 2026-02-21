@@ -35,8 +35,8 @@ export async function validatePages(pagesDir: string): Promise<ValidationError[]
           if (typeof mod?.default !== 'function') {
             errors.push({ file: full, message: 'default export must be function, got ' + typeof mod?.default })
           }
-        } catch (e: any) {
-          errors.push({ file: full, message: 'load error: ' + (e?.message || e) })
+        } catch (e: unknown) {
+          errors.push({ file: full, message: 'load error: ' + (e instanceof Error ? e.message : String(e)) })
         }
       } else if (name === '_layout.js') {
         try {
@@ -44,14 +44,14 @@ export async function validatePages(pagesDir: string): Promise<ValidationError[]
           if (typeof mod?.default !== 'function') {
             errors.push({ file: full, message: '_layout.js: default export must be (content) => html or (content, ctx) => html' })
           }
-        } catch (e: any) {
-          errors.push({ file: full, message: '_layout.js load error: ' + (e?.message || e) })
+        } catch (e: unknown) {
+          errors.push({ file: full, message: '_layout.js load error: ' + (e instanceof Error ? e.message : String(e)) })
         }
       } else if (name.endsWith('.island.js')) {
         try {
           await loadModule(full)
-        } catch (e: any) {
-          errors.push({ file: full, message: '*.island.js load error: ' + (e?.message || e) })
+        } catch (e: unknown) {
+          errors.push({ file: full, message: '*.island.js load error: ' + (e instanceof Error ? e.message : String(e)) })
         }
       }
     }
@@ -80,8 +80,8 @@ export async function validateApi(apiDir: string): Promise<ValidationError[]> {
         if (typeof mod?.default !== 'function') {
           errors.push({ file: full, message: 'handler must export default function, got ' + typeof mod?.default })
         }
-      } catch (e: any) {
-        errors.push({ file: full, message: 'load error: ' + (e?.message || e) })
+      } catch (e: unknown) {
+        errors.push({ file: full, message: 'load error: ' + (e instanceof Error ? e.message : String(e)) })
       }
     }
   }
@@ -97,8 +97,8 @@ export async function validateMiddleware(serverDir: string): Promise<ValidationE
     if (typeof mod?.default !== 'function') {
       errors.push({ file: p, message: 'middleware must export default function, got ' + typeof mod?.default })
     }
-  } catch (e: any) {
-    errors.push({ file: p, message: 'load error: ' + (e?.message || e) })
+  } catch (e: unknown) {
+    errors.push({ file: p, message: 'load error: ' + (e instanceof Error ? e.message : String(e)) })
   }
   return errors
 }

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <!-- A: 상단-좌 brighter, 하단-우 dimmer (입체감) -->
+    <linearGradient id="aGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="50%" style="stop-color:#e0e0e0"/>
+      <stop offset="100%" style="stop-color:#a0a0a0"/>
+    </linearGradient>
+    <!-- I: 균일한 밝기 -->
+    <linearGradient id="iGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#e8e8e8"/>
+    </linearGradient>
+    <!-- 발광 효과 -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- 배경 -->
+  <rect width="500" height="500" fill="#0a0a0a"/>
+  <g transform="translate(74, 138)">
+  <!-- A 픽셀 (7x7, 상단 뾰족·가운데 가로선·하단 두 다리) -->
+  <g filter="url(#glow)" fill="url(#aGrad)">
+    <rect x="96" y="0" width="32" height="32"/>
+    <rect x="64" y="32" width="32" height="32"/>
+    <rect x="128" y="32" width="32" height="32"/>
+    <rect x="32" y="64" width="32" height="32"/>
+    <rect x="160" y="64" width="32" height="32"/>
+    <rect x="0" y="96" width="32" height="32"/>
+    <rect x="32" y="96" width="32" height="32"/>
+    <rect x="64" y="96" width="32" height="32"/>
+    <rect x="96" y="96" width="32" height="32"/>
+    <rect x="128" y="96" width="32" height="32"/>
+    <rect x="160" y="96" width="32" height="32"/>
+    <rect x="192" y="96" width="32" height="32"/>
+    <rect x="0" y="128" width="32" height="32"/>
+    <rect x="192" y="128" width="32" height="32"/>
+    <rect x="0" y="160" width="32" height="32"/>
+    <rect x="192" y="160" width="32" height="32"/>
+    <rect x="0" y="192" width="32" height="32"/>
+    <rect x="192" y="192" width="32" height="32"/>
+    <rect x="0" y="224" width="32" height="32"/>
+    <rect x="192" y="224" width="32" height="32"/>
+  </g>
+  <!-- I 픽셀 (3x7, 상단 막대·세로 줄·하단 막대) -->
+  <g filter="url(#glow)" fill="url(#iGrad)">
+    <rect x="256" y="0" width="32" height="32"/>
+    <rect x="288" y="0" width="32" height="32"/>
+    <rect x="320" y="0" width="32" height="32"/>
+    <rect x="288" y="32" width="32" height="32"/>
+    <rect x="288" y="64" width="32" height="32"/>
+    <rect x="288" y="96" width="32" height="32"/>
+    <rect x="288" y="128" width="32" height="32"/>
+    <rect x="288" y="160" width="32" height="32"/>
+    <rect x="288" y="192" width="32" height="32"/>
+    <rect x="256" y="224" width="32" height="32"/>
+    <rect x="288" y="224" width="32" height="32"/>
+    <rect x="320" y="224" width="32" height="32"/>
+  </g>
+  </g>
+</svg>

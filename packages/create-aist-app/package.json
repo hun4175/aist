@@ -5,6 +5,7 @@
   "bin": {
     "create-aist-app": "./dist/cli.js"
   },
+  "files": ["dist", "assets"],
   "scripts": {
     "build": "tsup src/cli.ts --format esm --dts --outDir dist",
     "dev": "tsup src/cli.ts --format esm --dts --outDir dist --watch"

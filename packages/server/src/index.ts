@@ -4,6 +4,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'fs'
 import { join, extname } from 'path'
 import { pathToFileURL, fileURLToPath } from 'url'
 import { scanPages, matchRoute, getLayoutsForPath, scanIslands, extractIslandTags } from '@aist/router'
+import { validate } from '@aist/validator'
 import { json, redirect, each, $if } from './sugar.js'
 
 export { json, redirect, each, $if }
@@ -73,6 +74,13 @@ function scanApi(apiDir: string): { static: Map<string, string>; dynamic: ApiHan
 }
 
 export async function createAistServer(opts: AistServerOptions) {
+  const errors = await validate(opts.root)
+  if (errors.length > 0) {
+    for (const e of errors) {
+      console.error(`[aist] ${e.file}: ${e.message}`)
+    }
+    throw new Error('Aist validation failed. See .cursor/rules/aist.mdc for fix guide.')
+  }
   injectSugar()
   const port = opts.port ?? 3000
   const routes = scanPages(opts.pagesDir)
@@ -153,10 +161,12 @@ export async function createAistServer(opts: AistServerOptions) {
           const form = await req.clone().formData()
           tokenFromReq = form.get('_csrf') as string || ''
         } else if (ct.includes('application/json')) {
-          const json = await req.clone().json() as Record<string, unknown>
-          tokenFromReq = String(json?._csrf || '')
+          const body = await req.clone().json() as Record<string, unknown>
+          tokenFromReq = String(body?._csrf || '')
         }
-      } catch {}
+      } catch {
+        /* CSRF body parse 실패 시 tokenFromReq 유지 (null) */
+      }
     }
     return !!(tokenFromReq && tokenFromReq === tokenFromCookie)
   }

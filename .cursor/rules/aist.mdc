@@ -1,0 +1,25 @@
+---
+description: Aist convention 및 validator 에러 복구 가이드
+globs: pages/**/*.js,api/**/*.js,server/**/*.js
+alwaysApply: false
+---
+
+# Aist 에러 복구 가이드
+
+## Validator 에러 → 수정 방법
+
+| 에러 메시지 | 원인 | 수정 |
+|-------------|------|------|
+| `default export must be function, got undefined` | 페이지에 default export 없음 | `export default (params) => \`<div>...</div>\`` 추가 |
+| `default export must be function, got object` | export default가 객체/값임 | 함수로 변경: `export default () => ...` |
+| `handler must export default function, got ...` | API 핸들러 형식 오류 | `export default (req) => json(...)` 형태로 수정 |
+| `_layout.js: default export must be (content) => html or (content, ctx) => html` | 레이아웃이 함수 아님 | `export default (content, ctx = {}) => \`...\`\`` |
+| `middleware must export default function` | _middleware.js 형식 오류 | `export default (req, next) => next(req)` |
+| `*.island.js load error: ...` | Island 모듈 로드 실패 | import 경로, 문법 확인. `@aist/island`에서 reactive, effect 사용 |
+
+## Convention 요약
+
+- **페이지**: `경로.page.js` → `export default (params?) => html`
+- **API**: `경로.메서드.js` → `export default (req) => json(...)`. 동적 라우트는 `req.params.id`
+- **Island**: `ComponentName.island.js` → HTML 태그는 `<component-name>` (kebab-case)
+- **전역**: `json`, `redirect`, `each`, `$if` — import 불필요

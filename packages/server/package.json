@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@aist/router": "workspace:*",
-    "@aist/island": "workspace:*"
+    "@aist/island": "workspace:*",
+    "@aist/validator": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.0.0"

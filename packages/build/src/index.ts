@@ -24,6 +24,10 @@ export async function prerender(opts: PrerenderOptions): Promise<void> {
   const outDir = opts.outDir ?? join(opts.root, DEFAULT_OUT, 'public')
   mkdirSync(outDir, { recursive: true })
 
+  if (existsSync(opts.publicDir)) {
+    cpSync(opts.publicDir, outDir, { recursive: true })
+  }
+
   const server = await createAistServer({
     root: opts.root,
     pagesDir: opts.pagesDir,
@@ -62,7 +66,9 @@ export async function prerender(opts: PrerenderOptions): Promise<void> {
         const code = readFileSync(islandResolved, 'utf-8')
         writeFileSync(join(aistOut, 'island.js'), code, 'utf-8')
       }
-    } catch {}
+    } catch (err) {
+      console.warn('[aist] Island runtime copy failed:', err instanceof Error ? err.message : err)
+    }
     for (const [tagName, islandPath] of islands) {
       if (existsSync(islandPath)) {
         let code = readFileSync(islandPath, 'utf-8')
@@ -70,10 +76,6 @@ export async function prerender(opts: PrerenderOptions): Promise<void> {
         writeFileSync(join(islandsOut, `${tagName}.js`), code, 'utf-8')
       }
     }
-  }
-
-  if (existsSync(opts.publicDir)) {
-    cpSync(opts.publicDir, outDir, { recursive: true })
   }
 
   console.log(`Prerendered ${paths.length} pages to ${outDir}`)

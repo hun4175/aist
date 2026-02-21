@@ -121,6 +121,9 @@ importers:
       '@aist/router':
         specifier: workspace:*
         version: link:../router
+      '@aist/validator':
+        specifier: workspace:*
+        version: link:../validator
     devDependencies:
       tsup:
         specifier: ^8.0.0
