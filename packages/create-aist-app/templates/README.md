@@ -11,6 +11,22 @@ pnpm dev
 
 http://localhost:3000
 
+## 빌드
+
+```bash
+pnpm build
+```
+
+`.output/` 폴더에 Node 배포용 결과물 생성. `node .output/server.js` 로 실행.
+
+## 테스트
+
+```bash
+pnpm test
+```
+
+페이지, API, 미들웨어 Convention 검증.
+
 ## Convention (파일 규칙)
 
 | 구분 | 파일 | 시그니처 |

@@ -2,9 +2,15 @@
   "name": "{{name}}",
   "type": "module",
   "scripts": {
-    "dev": "node dev.js"
+    "dev": "node dev.js",
+    "build": "node build.js",
+    "test": "node test.js"
   },
   "dependencies": {
-    "@aist/server": "^0.1.0"
+    "@aist/server": "^0.1.0",
+    "@aist/adapter-node": "^0.1.0"
+  },
+  "devDependencies": {
+    "@aist/validator": "^0.1.0"
   }
 }
