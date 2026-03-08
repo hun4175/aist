@@ -9,7 +9,7 @@ pnpm install
 pnpm dev
 ```
 
-http://localhost:3000
+http://localhost:3000 — HMR 활성화. 코드 수정 시 자동 반영 및 브라우저 새로고침.
 
 ## 빌드
 

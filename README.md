@@ -23,6 +23,10 @@ pnpm --filter example dev
 
 브라우저에서 http://localhost:3000 접속.
 
+## 개발 서버 (HMR)
+
+`pnpm dev` 실행 시 HMR이 활성화됩니다. 페이지, API, Layout, Island 파일을 수정하면 서버 재시작 없이 변경사항이 즉시 반영됩니다. 브라우저는 파일 저장 시 자동으로 새로고침됩니다.
+
 ## 패키지 구조
 
 | 패키지 | 설명 |

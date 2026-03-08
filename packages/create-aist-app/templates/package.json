@@ -2,7 +2,7 @@
   "name": "{{name}}",
   "type": "module",
   "scripts": {
-    "dev": "node dev.js",
+    "dev": "nodemon dev.js",
     "build": "node build.js",
     "test": "node test.js"
   },
@@ -11,6 +11,7 @@
     "@aist/adapter-node": "^0.1.0"
   },
   "devDependencies": {
-    "@aist/validator": "^0.1.0"
+    "@aist/validator": "^0.1.0",
+    "nodemon": "^3.1.0"
   }
 }

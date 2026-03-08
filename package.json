@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "dev:blog": "pnpm --filter my-real-hard-blog dev",
     "build": "node scripts/build.mjs",
     "test": "pnpm -r test",
     "create": "pnpm exec create-aist-app"

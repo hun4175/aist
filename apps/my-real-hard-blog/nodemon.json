@@ -1,0 +1,5 @@
+{
+  "watch": ["pages", "api", "server", "components", "lib"],
+  "ext": "js,ts,tsx,json",
+  "ignore": ["node_modules", "dist", ".git"]
+}

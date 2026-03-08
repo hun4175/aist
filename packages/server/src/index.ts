@@ -6,6 +6,8 @@ import { pathToFileURL, fileURLToPath } from 'url'
 import { scanPages, matchRoute, getLayoutsForPath, scanIslands, extractIslandTags } from '@aist/router'
 import { validate } from '@aist/validator'
 import { json, redirect, each, $if } from './sugar.js'
+import chokidar from 'chokidar'
+import { WebSocketServer } from 'ws'
 
 export { json, redirect, each, $if }
 
@@ -25,13 +27,11 @@ export type AistServerOptions = {
   serverDir: string
   /** CSRF 토큰 검증 (POST/PUT/PATCH/DELETE). 기본 true */
   csrf?: boolean
+  /** HMR 활성화 (dev 모드). 코드 수정 시 재시작 없이 반영 */
+  dev?: boolean
 }
 
 const METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const
-
-function loadModule(modulePath: string) {
-  return import(pathToFileURL(modulePath).href)
-}
 
 type ApiHandler = { file: string; method: string; pattern: RegExp; paramNames: string[] }
 
@@ -83,31 +83,96 @@ export async function createAistServer(opts: AistServerOptions) {
   }
   injectSugar()
   const port = opts.port ?? 3000
-  const routes = scanPages(opts.pagesDir)
-  const islands = scanIslands(opts.pagesDir)
-  const { static: staticApi, dynamic: dynamicApi } = scanApi(opts.apiDir)
+  const dev = opts.dev === true
+
+  const loadModule = async (modulePath: string) => {
+    const href = pathToFileURL(modulePath).href
+    if (!dev) return import(href)
+    const mtime = existsSync(modulePath) ? statSync(modulePath).mtimeMs : 0
+    return import(href + `?t=${mtime}`)
+  }
+
+  let routes = scanPages(opts.pagesDir)
+  let islands = scanIslands(opts.pagesDir)
+  let { static: staticApi, dynamic: dynamicApi } = scanApi(opts.apiDir)
   let middleware: ((req: Request, next: (req: Request) => Promise<Response>) => Promise<Response>) | null = null
   const middlewarePath = join(opts.serverDir, '_middleware.js')
-  if (existsSync(middlewarePath)) {
-    const mod = await loadModule(middlewarePath)
-    if (mod.default) middleware = mod.default
-  }
-  let page404: (() => string | Promise<string>) | null = null
-  let page500: (() => string | Promise<string>) | null = null
   const p404 = join(opts.pagesDir, '404.page.js')
   const p500 = join(opts.pagesDir, '500.page.js')
-  if (existsSync(p404)) {
-    const mod = await loadModule(p404)
-    page404 = mod.default
+
+  const loadMiddleware = async () => {
+    if (!existsSync(middlewarePath)) {
+      middleware = null
+      return
+    }
+    const mod = await loadModule(middlewarePath)
+    middleware = mod.default || null
   }
-  if (existsSync(p500)) {
+  const loadPage404 = async () => {
+    if (!existsSync(p404)) {
+      page404 = null
+      return
+    }
+    const mod = await loadModule(p404)
+    page404 = mod.default || null
+  }
+  const loadPage500 = async () => {
+    if (!existsSync(p500)) {
+      page500 = null
+      return
+    }
     const mod = await loadModule(p500)
-    page500 = mod.default
+    page500 = mod.default || null
+  }
+
+  let page404: (() => string | Promise<string>) | null = null
+  let page500: (() => string | Promise<string>) | null = null
+  await loadMiddleware()
+  await loadPage404()
+  await loadPage500()
+
+  const hmrClients: Set<{ send: (d: string) => void }> = new Set()
+  const broadcastReload = () => {
+    hmrClients.forEach((ws) => {
+      try {
+        ws.send('reload')
+      } catch {}
+    })
+  }
+
+  let watchDebounce: ReturnType<typeof setTimeout> | null = null
+  const scheduleRescan = () => {
+    if (watchDebounce) clearTimeout(watchDebounce)
+    watchDebounce = setTimeout(async () => {
+      watchDebounce = null
+      routes = scanPages(opts.pagesDir)
+      islands = scanIslands(opts.pagesDir)
+      const api = scanApi(opts.apiDir)
+      staticApi = api.static
+      dynamicApi = api.dynamic
+      await loadMiddleware()
+      await loadPage404()
+      await loadPage500()
+      broadcastReload()
+    }, 150)
+  }
+
+  if (dev) {
+    const watcher = chokidar.watch([opts.pagesDir, opts.apiDir, opts.serverDir], { ignoreInitial: true }) as import('events').EventEmitter
+    watcher.on('add', scheduleRescan)
+    watcher.on('change', scheduleRescan)
+    watcher.on('unlink', scheduleRescan)
   }
 
   const defaultWrap = (body: string) => {
     if (/^\s*<!DOCTYPE/i.test(body) || /^\s*<html/i.test(body)) return body
     return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${body}</body></html>`
+  }
+
+  const injectHmrScript = (html: string): string => {
+    if (!dev) return html
+    const script = `<script>(function(){const ws=new WebSocket('ws://'+location.host+'/_hmr');ws.onmessage=function(){location.reload();};})();</script>`
+    return html.replace(/<\/body>/i, `${script}\n</body>`)
   }
 
   let islandRuntimePath: string | null = null
@@ -133,7 +198,7 @@ export async function createAistServer(opts: AistServerOptions) {
       const mod = await loadModule(layoutPath)
       const layoutFn = mod.default
       if (typeof layoutFn !== 'function') continue
-      wrapped = layoutFn.length >= 2 ? layoutFn(wrapped, ctx) : layoutFn(wrapped)
+      wrapped = layoutFn.length >= 2 ? layoutFn(wrapped, ctx) : layoutFn(wrapped, ctx)
     }
     return wrapped
   }
@@ -204,7 +269,7 @@ export async function createAistServer(opts: AistServerOptions) {
       const withCsrf = injectCsrfMeta(wrapped, csrfToken)
       const headers404: Record<string, string> = { 'Content-Type': 'text/html; charset=utf-8' }
       if (opts.csrf !== false) headers404['Set-Cookie'] = `${CSRF_COOKIE}=${csrfToken}; Path=/; SameSite=Strict; HttpOnly`
-      return new Response(defaultWrap(withCsrf), { headers: headers404, status: 404 })
+      return new Response(injectHmrScript(defaultWrap(withCsrf)), { headers: headers404, status: 404 })
     }
     try {
       const csrfToken = getOrCreateCsrfToken(req)
@@ -218,7 +283,7 @@ export async function createAistServer(opts: AistServerOptions) {
       html = injectCsrfMeta(html, csrfToken)
       const headers: Record<string, string> = { 'Content-Type': 'text/html; charset=utf-8' }
       if (opts.csrf !== false) headers['Set-Cookie'] = `${CSRF_COOKIE}=${csrfToken}; Path=/; SameSite=Strict; HttpOnly`
-      return new Response(defaultWrap(html), { headers })
+      return new Response(injectHmrScript(defaultWrap(html)), { headers })
     } catch (err) {
       const csrfToken = getOrCreateCsrfToken(req)
       const body = page500 ? await (typeof page500 === 'function' ? page500() : page500) : `<h1>Server Error</h1><pre>${err}</pre>`
@@ -226,7 +291,7 @@ export async function createAistServer(opts: AistServerOptions) {
       const withCsrf = injectCsrfMeta(wrapped, csrfToken)
       const headers500: Record<string, string> = { 'Content-Type': 'text/html; charset=utf-8' }
       if (opts.csrf !== false) headers500['Set-Cookie'] = `${CSRF_COOKIE}=${csrfToken}; Path=/; SameSite=Strict; HttpOnly`
-      return new Response(defaultWrap(withCsrf), { headers: headers500, status: 500 })
+      return new Response(injectHmrScript(defaultWrap(withCsrf)), { headers: headers500, status: 500 })
     }
   }
 
@@ -267,7 +332,9 @@ export async function createAistServer(opts: AistServerOptions) {
 
     if (pathname === '/_aist/island.js' && islandRuntimePath && existsSync(islandRuntimePath)) {
       const data = readFileSync(islandRuntimePath)
-      return new Response(new Uint8Array(data), { headers: { 'Content-Type': 'application/javascript' } })
+      const headers: Record<string, string> = { 'Content-Type': 'application/javascript' }
+      if (dev) headers['Cache-Control'] = 'no-store'
+      return new Response(new Uint8Array(data), { headers })
     }
     const islandMatch = pathname.match(/^\/_islands\/([a-z0-9-]+)\.js$/)
     if (islandMatch) {
@@ -279,7 +346,9 @@ export async function createAistServer(opts: AistServerOptions) {
           /from\s+['"]@aist\/island['"]/g,
           'from "/_aist/island.js"'
         )
-        return new Response(transformed, { headers: { 'Content-Type': 'application/javascript' } })
+        const headers: Record<string, string> = { 'Content-Type': 'application/javascript' }
+        if (dev) headers['Cache-Control'] = 'no-store'
+        return new Response(transformed, { headers })
       }
     }
 
@@ -326,9 +395,25 @@ export async function createAistServer(opts: AistServerOptions) {
   }
 
   let server: ReturnType<typeof createServer> | null = null
+  let wss: WebSocketServer | null = null
   const tryListen = (p: number): Promise<void> =>
     new Promise((resolve, reject) => {
       const s = createServer(nodeHandler)
+      if (dev) {
+        wss = new WebSocketServer({ noServer: true })
+        s.on('upgrade', (req: IncomingMessage, socket: import('stream').Duplex, head: Buffer) => {
+          const path = req.url?.split('?')[0]
+          if (path === '/_hmr') {
+            wss!.handleUpgrade(req, socket, head, (ws) => {
+              hmrClients.add(ws)
+              ws.on('close', () => hmrClients.delete(ws))
+              wss!.emit('connection', ws, req)
+            })
+          } else {
+            socket.destroy()
+          }
+        })
+      }
       s.once('error', (err: NodeJS.ErrnoException) => {
         if (err.code === 'EADDRINUSE' && p < port + 10) {
           tryListen(p + 1).then(resolve).catch(reject)
@@ -336,13 +421,16 @@ export async function createAistServer(opts: AistServerOptions) {
       })
       s.listen(p, () => {
         server = s
-        console.log(`Aist dev server: http://localhost:${p}`)
+        console.log(`Aist dev server: http://localhost:${p}` + (dev ? ' (HMR)' : ''))
         resolve()
       })
     })
   return {
     listen: () => tryListen(port),
-    close: () => server?.close(),
+    close: () => {
+      wss?.close()
+      server?.close()
+    },
     /** Node/Vercel 어댑터용: (req, res) => void */
     handler: nodeHandler,
     /** Netlify/Edge 어댑터용: (req: Request) => Promise<Response> */

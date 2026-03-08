@@ -17,7 +17,9 @@
   "dependencies": {
     "@aist/router": "workspace:*",
     "@aist/island": "workspace:*",
-    "@aist/validator": "workspace:*"
+    "@aist/validator": "workspace:*",
+    "chokidar": "^4.0.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "tsup": "^8.0.0"

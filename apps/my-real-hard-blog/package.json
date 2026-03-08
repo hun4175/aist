@@ -1,0 +1,20 @@
+{
+  "name": "my-real-hard-blog",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon dev.js",
+    "build": "node build.js",
+    "build:vercel": "node build-vercel.js",
+    "test": "node test.js",
+    "verify:close": "node verify-close.mjs"
+  },
+  "dependencies": {
+    "@aist/server": "workspace:*",
+    "@aist/adapter-node": "workspace:*",
+    "@aist/adapter-vercel": "workspace:*"
+  },
+  "devDependencies": {
+    "@aist/validator": "workspace:*",
+    "nodemon": "^3.1.0"
+  }
+}

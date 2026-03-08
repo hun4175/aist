@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync, cpSync, existsSync } from 'fs'
-import { join } from 'path'
+import { join, resolve } from 'path'
 
 export type VercelAdapterOptions = {
   root: string
@@ -16,10 +16,13 @@ export async function buildVercelAdapter(opts: VercelAdapterOptions): Promise<st
   const apiDir = join(outDir, 'api')
   mkdirSync(apiDir, { recursive: true })
 
-  const dirs = ['pages', 'api', 'public', 'server']
-  for (const d of dirs) {
-    const src = join(opts.root, d)
-    if (existsSync(src)) cpSync(src, join(outDir, d), { recursive: true })
+  const isOutputToRoot = resolve(outDir) === resolve(opts.root)
+  if (!isOutputToRoot) {
+    const dirs = ['pages', 'api', 'public', 'server', 'components', 'lib']
+    for (const d of dirs) {
+      const src = join(opts.root, d)
+      if (existsSync(src)) cpSync(src, join(outDir, d), { recursive: true })
+    }
   }
 
   const handlerJs = `import { createAistServer } from '@aist/server'
@@ -53,12 +56,14 @@ export default async function aistHandler(req, res) {
   }
   writeFileSync(join(outDir, 'vercel.json'), JSON.stringify(vercelJson, null, 2), 'utf-8')
 
-  const pkg = {
-    name: 'aist-app',
-    type: 'module',
-    dependencies: { '@aist/server': '^0.1.0' }
+  if (!isOutputToRoot) {
+    const pkg = {
+      name: 'aist-app',
+      type: 'module',
+      dependencies: { '@aist/server': '^0.1.0' }
+    }
+    writeFileSync(join(outDir, 'package.json'), JSON.stringify(pkg, null, 2), 'utf-8')
   }
-  writeFileSync(join(outDir, 'package.json'), JSON.stringify(pkg, null, 2), 'utf-8')
 
   console.log(`Vercel adapter: ${outDir}`)
   return outDir

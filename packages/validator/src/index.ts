@@ -49,6 +49,10 @@ export async function validatePages(pagesDir: string): Promise<ValidationError[]
         }
       } else if (name.endsWith('.island.js')) {
         try {
+          if (typeof (globalThis as any).HTMLElement === 'undefined') {
+            ;(globalThis as any).HTMLElement = class HTMLElement {}
+            ;(globalThis as any).customElements = { define: () => {} }
+          }
           await loadModule(full)
         } catch (e: unknown) {
           errors.push({ file: full, message: '*.island.js load error: ' + (e instanceof Error ? e.message : String(e)) })

@@ -13,7 +13,7 @@ export async function buildNodeAdapter(opts: NodeAdapterOptions): Promise<string
   const outDir = opts.outDir ?? join(opts.root, DEFAULT_OUT)
   mkdirSync(outDir, { recursive: true })
 
-  const dirs = ['pages', 'api', 'public', 'server']
+  const dirs = ['pages', 'api', 'public', 'server', 'components', 'lib']
   for (const d of dirs) {
     const src = join(opts.root, d)
     if (existsSync(src)) cpSync(src, join(outDir, d), { recursive: true })

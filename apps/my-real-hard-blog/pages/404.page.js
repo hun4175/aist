@@ -1,0 +1,1 @@
+export default () => `<div class="text-center py-16"><h1 class="text-2xl font-bold text-slate-100">Not Found</h1><p class="mt-2 text-slate-400">요청한 페이지를 찾을 수 없습니다.</p><a href="/" class="inline-block mt-4 text-sky-400 hover:underline">홈으로</a></div>`
