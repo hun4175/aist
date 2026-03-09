@@ -4,6 +4,6 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   dts: {
-    compilerOptions: { moduleResolution: 'node' },
+    compilerOptions: { module: 'ESNext', moduleResolution: 'node' },
   },
 })

@@ -10,6 +10,7 @@
     "create": "pnpm exec create-aist-app"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
     "create-aist-app": "workspace:*",
     "pnpm": "^9.0.0",
     "typescript": "^5.0.0"
