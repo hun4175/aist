@@ -11,8 +11,8 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
-    "dev": "tsup src/index.ts --format esm --dts --watch"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@aist/router": "workspace:*",
@@ -22,6 +22,8 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.5.0",
     "tsup": "^8.0.0"
   }
 }
