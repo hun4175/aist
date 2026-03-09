@@ -30,10 +30,10 @@ pnpm --filter my-real-hard-blog build:vercel
 1. [Vercel](https://vercel.com)에서 저장소 Import
 2. **Root Directory**: `apps/my-real-hard-blog`
 3. **Framework Preset**: Other
-4. **Build Command**: `pnpm run build:vercel:blog`
+4. **Build Command**: `pnpm -w run build:vercel:blog`
 
 > monorepo: Root Directory를 `apps/my-real-hard-blog`로 두면 해당 폴더가 프로젝트 루트로 취급됩니다. `@aist/*` 패키지는 워크스페이스 루트에 있으므로, Vercel 빌드 시 상위 패키지가 없다는 오류가 나면 **Root Directory를 비우고** 아래처럼 설정하세요:
-> - **Build Command**: `pnpm run build:vercel:blog`
+> - **Build Command**: `pnpm -w run build:vercel:blog`
 
 ## 페이지
 
