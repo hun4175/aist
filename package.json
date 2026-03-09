@@ -6,6 +6,7 @@
     "dev": "node scripts/dev.mjs",
     "dev:blog": "pnpm --filter my-real-hard-blog dev",
     "build": "node scripts/build.mjs",
+    "build:vercel:blog": "pnpm --filter @aist/adapter-vercel... run build && pnpm --filter my-real-hard-blog build:vercel",
     "test": "pnpm -r test",
     "create": "pnpm exec create-aist-app"
   },
